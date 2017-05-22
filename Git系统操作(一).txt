@@ -1,0 +1,91 @@
+步骤1：创建一个初始化的Git工作区
+$ mkdir ~/jupiter  # 创建目录
+$ cd ~/jupiter     # 进入目录
+$ git init .       # 初始化你的新 Git 工作区
+
+步骤2：查看文件状态
+$ echo "hello world" > foo
+$ git status
+On branch master
+Untracked files:
+foo  
+(use "git add <file>..." to include in what will be committed)
+nothing added but untracked files present (use "git add" to track)
+  -->Git 会提醒你怎样把文件加入到提交任务中。
+
+  名词解释：
+    Untracked未跟踪文件：你在仓库里新建了一个文件，但是你没有把文件加入到 Git 的管理之中。
+    Tracked已跟踪文件：已经加入到 Git 管理的文件。
+    Staged暂存区文件：被修改了的已跟踪文件，并加入到 Git 的提交队列中。
+
+步骤3：暂存git文件
+$ git add foo
+$ git status
+On branch master
+Changes to be committed:
+(use "git reset HEAD <file>..." to unstage)
+new file:   foo
+  -->使用 "git rm --cached <文件>..." 以取消暂存
+
+步骤4：提交暂存文件
+$ git commit -m "My great project,first commit."
+
+步骤5:创建新文件并暂存文件,并做二次提交暂存文件
+$ touch readme
+$ touch readme_1
+$ mkdir file_1;touch file_1/xx;touch file_1/yy
+$ git status -->查看文件状态
+$ git add readme readme_1 file_1
+$ git commit -m "My great project,second commit."
+
+步骤6:查看提交的镜像还原点信息
+$ git log [--oneline] -->oneline为可选参数
+
+步骤7:修改readme文件并做出第三提交
+$ echo "xxoo\nyyy" >> readme
+$ git commit -o readme -m "修改了readme,third commit."
+$ git log --oneline
+  3f200ce 修改了readme,third commit.
+  457118f My great project,second commit.
+  c070014 My great project, first commit.
+
+<在当前位置下恢复以前镜像中的文件>
+步骤8：将第二次提交的文件readme恢复到当前位置
+$ git checkout 457118f readme
+$ git status
+
+
+步骤9：由于已经把第二次提交的readme恢复到当前位置，所以需要对当前状态也要做提交
+$ git add readme
+$ git commit -m "将文件reademe恢复到第二次提交状态"
+$ git log --oneline
+  c4e01fd 将文件reademe恢复到第二次提交状态
+  3f200ce 修改了readme,third commit.
+  457118f My great project,second commit.
+  c070014 My great project, first commit.
+
+<从当前位置直接回退至以前的镜像还原点>
+步骤10：回退至第三次提交的还原点 -->开辟新的分支
+$ git checkout 3f200ce  -->此为倒带操作，但git没有删除第四次提交的还原点内容，而在第三次提交的还原点处开辟了新的分支
+$ git log --online
+$ git checkout -b remix -->为你的分支镜像取名为remix
+
+步骤11：在分支remix中创建文件zzz，并开辟新的分支
+$ touch zzz
+$ git status -->在分支remix中zzz的状态为未跟踪
+$ git checkout -b crazy_idea
+$ git status  -->在在分支crazy_idea中zzz的状态为未跟踪
+
+$步骤12：切换至分支remix，并将zzz文件提交
+$ git checkout remix
+$ git add zzz
+$ git commit -m "创建新文件zzz,fourth commit." -->此的分支crazy_idea中已经变成了干净的了，因为zzz文件已经在分支remix中了
+
+步骤13：切换至主分支master
+$ git checkout master
+
+步骤14：将分支crazy_idea中的内容合并到主分支master中(注：也就是一个有内容的readme文件会替换一个无内容的readme)
+$git merge crazy_idea -->发生冲突在readme，分支crazy_idea修改了readme的内容，此时只需要修改readme的内容将其
+                         与分支crazy_idea中的保持一致(需要执行 git commit -a -m "reade添加内容,seventh commit")
+注：由于默认的merge操作会把分支上的镜像还原点信息也给同步到master中，所以可以添加--squash参数。
+    判断是否使用--squash选项最根本的标准是，待合并分支上的历史是否有意义。

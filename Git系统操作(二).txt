@@ -1,0 +1,33 @@
+操作:pull远端仓库与push至远端仓库
+$ mkidr wpxiao;cd wpxiao
+$ git init
+$ git pull https://github.com/fengxueff/wpxiao.git
+$ git checkout -b wpxiao_1
+$ touch xxx;touch yyy
+$ git add xxx yyy
+$ git commit -m "add two files"
+$ git checkout master
+$ git merge wpxiao_1 -->只能先将数据merge到分支master中，这样才能将数据push至远端仓库
+$ git push --set-upstream https://github.com/fengxueff/wpxiao.git master
+
+操作:创建本地git仓库以及模拟远程clone操作
+$ mkdir wpxiao_2;cd wpxiao_2
+$ git init
+$ mkdir test
+$ echo "fasdfa" > test/xxx
+$ git add test
+$ git commit -m "first commit."
+$ git remote add origin ssh://wpxiao@wpxiao-ThinkPad-X220/home/wpxiao/github/wpxiao_2/.git
+$ git remote -v
+$ git push origin master
+
+$ cd ~
+$ git clone ssh://wpxiao@wpxiao-ThinkPad-X220/home/wpxiao/github/wpxiao_2/.git
+
+建议：少使用pull操作，可将pull操作分解为fetch与merge
+如：
+$ mkdir wpxiao_3 ;cd wpxiao_3
+$ git init
+$ git remote add origin ssh://wpxiao@wpxiao-ThinkPad-X220/home/wpxiao/github/wpxiao_2/.git
+$ git fetch origin master
+$ git merge FETCH_HEAD
